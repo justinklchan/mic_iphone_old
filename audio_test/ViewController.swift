@@ -5,12 +5,15 @@
 //  Created by Justin Kwok Lam CHAN on 4/4/21.
 //
 
+import Charts
 import UIKit
 import AVFoundation
 import Accelerate
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, ChartViewDelegate {
+
     
+    @IBOutlet weak var lineChart: LineChartView!
     var audioSession:AVAudioSession!
     var audioRecorder:AVAudioRecorder!
     var player: AVAudioPlayer?
@@ -18,6 +21,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.lineChart.delegate = self
+        
+        let set_a: LineChartDataSet = LineChartDataSet(entries: [ChartDataEntry](), label: "")
+        set_a.drawCirclesEnabled = false
+        set_a.setColor(UIColor.blue)
+        
     }
     
     @IBAction func startButton(_ sender: Any) {
@@ -61,19 +71,19 @@ class ViewController: UIViewController {
             audioRecorder.record()
             
             // read audio file to be played
-            guard let chirpurl = Bundle.main.url(forResource: "shortchirp", withExtension: "wav") else { return }
+            guard let chirpurl = Bundle.main.url(forResource: "tone_1000", withExtension: "wav") else { return }
             
             player = try AVAudioPlayer(contentsOf: chirpurl, fileTypeHint: AVFileType.mp3.rawValue)
             
             // sets the volume, make sure phone is not on silent mode and external volume switch has volume up
             guard let player = player else { return }
-            player.volume=0.02
+            player.volume=0.1
             
             player.play()
             
             // important, need to sleep main thread while speaker is playing, otherwise
             // it will directly execute the next step without waiting for file to finish playing
-            sleep(3)
+            sleep(1)
             
             audioRecorder.stop()
             player.stop()
@@ -121,24 +131,49 @@ class ViewController: UIViewController {
         return vals;
     }
     
+
     func myfft(sig: Array<Double>, n: Int) -> Array<Double> {
+        let N = n
+        let N2 = vDSP_Length(N/2)
+
         let LOG_N = vDSP_Length(log2(Float(n)));
-        
+
         let setup = vDSP_create_fftsetupD(LOG_N,2)!;
         
-        var tempSplitComplexReal = [Double](repeating: 0.0, count: sig.count);
-        var tempSplitComplexImag = [Double](repeating: 0.0, count: sig.count);
-        for i in 0..<sig.count {
-            tempSplitComplexReal[i] = sig[i];
+        let num = (sig.count-24000)+1
+        var tempSplitComplexReal = [Double](repeating: 0.0, count: num);
+        var tempSplitComplexImag = [Double](repeating: 0.0, count: num);
+        var counter:Int = 0
+        for i in 24000..<sig.count {
+            tempSplitComplexReal[counter] = sig[i];
+            counter+=1
         }
-        
-        var tempSplitComplex = DSPDoubleSplitComplex(realp: &tempSplitComplexReal, imagp: &tempSplitComplexImag);
-        
-        vDSP_fft_zipD(setup, &tempSplitComplex, 1, LOG_N, FFTDirection(FFT_FORWARD));
-        
-        var fftMagnitudes = [Double](repeating: 0.0, count: n/2)
-        vDSP_zvmagsD(&tempSplitComplex, 1, &fftMagnitudes, 1, vDSP_Length(n/2));
+
+        var splitComplex: DSPDoubleSplitComplex!
+
+        tempSplitComplexReal.withUnsafeMutableBufferPointer {
+            realBP in tempSplitComplexImag.withUnsafeMutableBufferPointer {
+                imaginaryBP in splitComplex = DSPDoubleSplitComplex(
+                        realp: realBP.baseAddress!,
+                        imagp: imaginaryBP.baseAddress!)
+                    }
+                }
+
+        vDSP_fft_zipD(setup, &splitComplex, 1, LOG_N, FFTDirection(FFT_FORWARD));
+
+        var fftMagnitudes = [Double](repeating: 0.0, count: N/2)
+        vDSP_zvmagsD(&splitComplex, 1, &fftMagnitudes, 1, N2);
         vDSP_destroy_fftsetupD(setup);
+
+        print(fftMagnitudes.description)
+        
+        counter=0
+        for val in fftMagnitudes {
+            self.lineChart.data?.addEntry(ChartDataEntry(x: Double(counter), y: val), dataSetIndex: 0)
+            counter+=1
+        }
+        self.lineChart.notifyDataSetChanged()
+
         
         return fftMagnitudes
     }
