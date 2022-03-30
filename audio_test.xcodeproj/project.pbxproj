@@ -15,6 +15,7 @@
 		891440A8261A9AFD00AAD706 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 891440A6261A9AFD00AAD706 /* LaunchScreen.storyboard */; };
 		891440B3261A9AFD00AAD706 /* audio_testTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891440B2261A9AFD00AAD706 /* audio_testTests.swift */; };
 		891440BE261A9AFD00AAD706 /* audio_testUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891440BD261A9AFD00AAD706 /* audio_testUITests.swift */; };
+		891440CF261A9B9A00AAD706 /* shortchirp.wav in Resources */ = {isa = PBXBuildFile; fileRef = 891440CE261A9B9A00AAD706 /* shortchirp.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		891440B9261A9AFD00AAD706 /* audio_testUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = audio_testUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		891440BD261A9AFD00AAD706 /* audio_testUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = audio_testUITests.swift; sourceTree = "<group>"; };
 		891440BF261A9AFD00AAD706 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		891440CE261A9B9A00AAD706 /* shortchirp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shortchirp.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 		8914409A261A9AFA00AAD706 /* audio_test */ = {
 			isa = PBXGroup;
 			children = (
+				891440CE261A9B9A00AAD706 /* shortchirp.wav */,
 				8914409B261A9AFA00AAD706 /* AppDelegate.swift */,
 				8914409D261A9AFA00AAD706 /* SceneDelegate.swift */,
 				8914409F261A9AFA00AAD706 /* ViewController.swift */,
@@ -231,6 +234,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				891440CF261A9B9A00AAD706 /* shortchirp.wav in Resources */,
 				891440A8261A9AFD00AAD706 /* LaunchScreen.storyboard in Resources */,
 				891440A5261A9AFD00AAD706 /* Assets.xcassets in Resources */,
 				891440A3261A9AFA00AAD706 /* Main.storyboard in Resources */,
