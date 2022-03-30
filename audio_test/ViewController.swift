@@ -23,15 +23,17 @@ class ViewController: UIViewController, ChartViewDelegate {
         super.viewDidLoad()
         
         self.lineChart.delegate = self
+    }
+    
+    @IBAction func startButton(_ sender: Any) {
+        let timestamp = NSDate().timeIntervalSince1970
         
         let set_a: LineChartDataSet = LineChartDataSet(entries: [ChartDataEntry](), label: "")
         set_a.drawCirclesEnabled = false
         set_a.setColor(UIColor.blue)
         
-    }
-    
-    @IBAction func startButton(_ sender: Any) {
-        let timestamp = NSDate().timeIntervalSince1970
+        self.lineChart.data = LineChartData(dataSets: [set_a])
+        
         let filename = "audio-\(timestamp).caf"
         label.text=filename
         myrecord(filename: filename)
@@ -77,7 +79,7 @@ class ViewController: UIViewController, ChartViewDelegate {
             
             // sets the volume, make sure phone is not on silent mode and external volume switch has volume up
             guard let player = player else { return }
-            player.volume=0.1
+            player.volume=0.01
             
             player.play()
             
@@ -167,13 +169,19 @@ class ViewController: UIViewController, ChartViewDelegate {
 
         print(fftMagnitudes.description)
         
+//        if self.lineChart.data!.entryCount > 0 {
+//            for i in 0...self.lineChart.data!.entryCount {
+//                self.lineChart.data!.remove(i,0)
+//            }
+//        }
+        
         counter=0
         for val in fftMagnitudes {
-            self.lineChart.data?.addEntry(ChartDataEntry(x: Double(counter), y: val), dataSetIndex: 0)
+            self.lineChart.data?.addEntry(ChartDataEntry(x: Double(counter), y: 10*log10(val)), dataSetIndex: 0)
             counter+=1
         }
+        
         self.lineChart.notifyDataSetChanged()
-
         
         return fftMagnitudes
     }
