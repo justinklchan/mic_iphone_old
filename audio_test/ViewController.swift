@@ -177,7 +177,7 @@ class ViewController: UIViewController, ChartViewDelegate {
         
         counter=0
         for val in fftMagnitudes {
-            self.lineChart.data?.addEntry(ChartDataEntry(x: Double(counter), y: 10*log10(val)), dataSetIndex: 0)
+            self.lineChart.data?.append(ChartDataEntry(x: Double(counter), y: 10*log10(val)) as! ChartDataSetProtocol)
             counter+=1
         }
         
